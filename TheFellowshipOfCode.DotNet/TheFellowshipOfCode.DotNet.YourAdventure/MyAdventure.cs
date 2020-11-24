@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using HTF2020.Contracts;
 using HTF2020.Contracts.Enums;
 using HTF2020.Contracts.Models;
 using HTF2020.Contracts.Models.Adventurers;
+using HTF2020.Contracts.Models.Party;
 using HTF2020.Contracts.Requests;
 
 namespace TheFellowshipOfCode.DotNet.YourAdventure
 {
     public class MyAdventure : IAdventure
     {
-        private readonly Random _random = new Random();
+        private TurnAction[] turnActions = null;
+        private int currentStepInTurnActions = 0;
 
         public Task<Party> CreateParty(CreatePartyRequest request)
         {
@@ -24,7 +28,7 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
 
             for (var i = 0; i < request.MembersCount; i++)
             {
-                party.Members.Add(new Fighter()
+                party.Members.Add(new Wizard()
                 {
                     Id = i,
                     Name = $"Member {i + 1}",
@@ -39,39 +43,89 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
 
         public Task<Turn> PlayTurn(PlayTurnRequest request)
         {
+            if (turnActions == null)
+            {
+                turnActions = getTurnActionsFromPathLocations(getPathLocationsFromMap(request.Map));
+            }
             return PlayToEnd();
 
             Task<Turn> PlayToEnd()
             {
-                return Task.FromResult(request.PossibleActions.Contains(TurnAction.WalkSouth) ? new Turn(TurnAction.WalkSouth) : new Turn(request.PossibleActions[_random.Next(request.PossibleActions.Length)]));
+                return Strategic();
             }
 
             Task<Turn> Strategic()
             {
-                const double goingEastBias = 0.35;
-                const double goingSouthBias = 0.25;
-                if (request.PossibleActions.Contains(TurnAction.Loot))
-                {
-                    return Task.FromResult(new Turn(TurnAction.Loot));
-                }
-
+                TurnAction turnAction;
+                
                 if (request.PossibleActions.Contains(TurnAction.Attack))
                 {
-                    return Task.FromResult(new Turn(TurnAction.Attack));
-                }
-
-                if (request.PossibleActions.Contains(TurnAction.WalkEast) && _random.NextDouble() > (1 - goingEastBias))
+                    turnAction = TurnAction.Attack;
+                } 
+                else if(request.PossibleActions.Contains(TurnAction.Loot))
                 {
-                    return Task.FromResult(new Turn(TurnAction.WalkEast));
+                    turnAction = TurnAction.Loot;
                 }
-
-                if (request.PossibleActions.Contains(TurnAction.WalkSouth) && _random.NextDouble() > (1 - goingSouthBias))
+                else
                 {
-                    return Task.FromResult(new Turn(TurnAction.WalkSouth));
+                    currentStepInTurnActions++;
+                    turnAction =  turnActions[currentStepInTurnActions - 1];
                 }
+                return Task.FromResult(new Turn(turnAction));
 
-                return Task.FromResult(new Turn(request.PossibleActions[_random.Next(request.PossibleActions.Length)]));
+
             }
+        }
+
+        private TurnAction[] getTurnActionsFromPathLocations(Point[] pathLocations)
+        {
+            TurnAction[] result = new TurnAction[pathLocations.Length];
+            int i = 1;
+            while (i < pathLocations.Length-1)
+            {
+                Point previousLocation = pathLocations[i - 1];
+                Point currentLocation = pathLocations[i];
+                if (previousLocation.X > currentLocation.X)
+                {
+                    result[i-1] = TurnAction.WalkNorth;
+                } 
+                else if (previousLocation.X < currentLocation.X)
+                {
+                    result[i-1] = TurnAction.WalkSouth;
+                } 
+                else if (previousLocation.Y > currentLocation.Y)
+                {
+                    result[i-1] = TurnAction.WalkWest;
+                } 
+                else if (previousLocation.Y < currentLocation.Y)
+                {
+                    result[i-1] = TurnAction.WalkEast;
+                }
+                i++;
+            }
+
+            
+            return result;
+        }
+
+        private Point[] getPathLocationsFromMap(Map map)
+        {
+            return new[] 
+            {
+                new Point(0, 0),
+                new Point(1, 0),
+                new Point(2, 0),
+                new Point(3, 0),
+                new Point(4, 0),
+                new Point(5, 0),
+                new Point(6, 0),
+                new Point(6, 1),
+                new Point(6, 2),
+                new Point(6, 3),
+                new Point(6, 4),
+                new Point(6, 5),
+                new Point(6, 6)
+            };
         }
     }
 }
