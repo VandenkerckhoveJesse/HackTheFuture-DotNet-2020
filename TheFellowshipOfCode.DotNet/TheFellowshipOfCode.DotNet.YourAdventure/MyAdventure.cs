@@ -18,8 +18,15 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
 {
     public class MyAdventure : IAdventure
     {
+        private const int WEIGHT_ENEMY = 100;
+        private const int WEIGHT_TREASURE = 0;
+        private const int WEIGHT_NOTHING = 40;
+        
         private TurnAction[] turnActions = null;
+        private int start = 0;
+        private int end = 0;
         private int currentStepInTurnActions = 0;
+        
 
         public Task<Party> CreateParty(CreatePartyRequest request)
         {
@@ -49,6 +56,8 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
             if (turnActions == null)
             {
                 turnActions = getTurnActionsFromPathLocations(getPathLocationsFromMap(request.Map));
+                start = 0;//getNumberFromMatrix(request.Map, TileType.Start);
+                end = 35; //getNumberFromMatrix(request.Map, TileType.Finish);
             }
             return PlayToEnd();
 
@@ -117,7 +126,8 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
 
         private Point[] getPathLocationsFromMap(Map map)
         {
-            return dijkstrasAlgorithm(map);
+            var dijkstras = dijkstrasAlgorithm(map);
+            return dijkstras;
             return new[] 
             {
                 new Point(0, 0),
@@ -134,22 +144,161 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
             };
         }
 
-        struct DijkstraPoint
-        {
-            public Point Point { get; set; }
-            public int Weight { get; set; }
-        }
-        
         private Point[] dijkstrasAlgorithm(Map map)
         {
             var graph = new Graph<Point, string>();
-            addTilesToGraph(graph, map);
-            return null;
+            addTilesToGraph(graph, map); 
+            connectTilesFromGraph(graph, map);
+            var ding = 0;
+            ShortestPathResult result = graph.Dijkstra((uint) start, (uint) end);
+            var path = result.GetPath();
+            var enumer = path.GetEnumerator();
+            var points = getPointsFromPath(enumer, map);
+            return points;
+        }
+
+        private Point[] getPointsFromPath(IEnumerator<uint> enumerator, Map map)
+        {
+            var list = new List<Point>();
+            while (enumerator.MoveNext())
+            {
+                Console.WriteLine("ding");
+                var current = enumerator.Current;
+                list.Add(getPointFromPath(current, map));
+            }
+
+            return list.ToArray();
+        }
+
+        private Point getPointFromPath(uint path, Map map)
+        {
+            var width = map.Tiles.GetLength(0);
+            int x = (int) (path % width);
+            int y = (int) (path / width);
+            return new Point(x, y);
         }
 
         private void addTilesToGraph(Graph<Point, string> graph, Map map)
         {
-            
+            var matrix = map.Tiles;
+
+            int x = 0;
+            int y = 0;
+            var width = matrix.GetLength(0);
+            var length = matrix.GetLength(1);
+            while (y < width)
+            {
+                x = 0;
+                while (x < length)
+                {
+                    graph.AddNode(new Point(x, y));
+                    x++;
+                }
+
+                y++;
+            }
+        }
+        
+        private void connectTilesFromGraph(Graph<Point, string> graph, Map map)
+        {
+            var matrix = map.Tiles;
+
+            int x = 0;
+            int y = 0;
+            uint index = 0;
+            var width = matrix.GetLength(0);
+            var length = matrix.GetLength(1);
+            while (y < length)
+            {
+                x = 0;
+                while (x < width)
+                {
+                    var current = map.Tiles[x, y];
+                    if (x < width-1)
+                    {
+                        var right = map.Tiles[x + 1, y];
+                        var rightIndex = index + 1;
+                        if (!(right.TileType == TileType.Wall || right.TerrainType == TerrainType.Water))
+                        {
+                            var weight = WEIGHT_NOTHING;
+                            if (right.TileType == TileType.TreasureChest) weight = WEIGHT_TREASURE;
+                            if (right.EnemyGroup != null) weight = WEIGHT_ENEMY;
+                            graph.Connect(index, rightIndex, weight, "bla");
+                        }
+                    }
+                    if (x > 0)
+                    {
+                        var left = map.Tiles[x - 1, y];
+                        var leftIndex = index - 1;
+                        if (!(left.TileType == TileType.Wall || left.TerrainType == TerrainType.Water))
+                        {
+                            var weight = WEIGHT_NOTHING;
+                            if (left.TileType == TileType.TreasureChest) weight = WEIGHT_TREASURE;
+                            if (left.EnemyGroup != null) weight = WEIGHT_ENEMY;
+                            graph.Connect(index, leftIndex, weight, "bla");
+                        }
+                    }
+
+                    if (y < length-1)
+                    {
+                        var under = map.Tiles[x, y + 1];
+                        var underIndex = (uint) (index + width);
+                        if (!(under.TileType == TileType.Wall || under.TerrainType == TerrainType.Water))
+                        {
+                            var weight = WEIGHT_NOTHING;
+                            if (under.TileType == TileType.TreasureChest) weight = WEIGHT_TREASURE;
+                            if (under.EnemyGroup != null) weight = WEIGHT_ENEMY;
+                            graph.Connect(index, underIndex, weight, "bla");
+                        }
+                    }
+                    
+                    if (y > 0)
+                    {
+                        var above = map.Tiles[x, y - 1];
+                        var aboveIndex = (uint) (index - width);
+                        if (!(above.TileType == TileType.Wall || above.TerrainType == TerrainType.Water))
+                        {
+                            var weight = WEIGHT_NOTHING;
+                            if (above.TileType == TileType.TreasureChest) weight = WEIGHT_TREASURE;
+                            if (above.EnemyGroup != null) weight = WEIGHT_ENEMY;
+                            graph.Connect(index, aboveIndex, weight, "bla");
+                        }
+                    }
+
+                    index++;
+                    x++;
+                }
+
+                y++;
+            }
+        }
+
+        private int getNumberFromMatrix(Map map, TileType type)
+        {
+            var matrix = map.Tiles;
+            int x = 0;
+            int index = 0;
+            int y = 0;
+            var width = matrix.GetLength(0);
+            var length = matrix.GetLength(1);
+            while (y < width)
+            {
+                x = 0;
+                while (x < length)
+                {
+                    if (matrix[x, y].TileType == type)
+                    {
+                        return index;
+                    }
+
+                    x++;
+                }
+
+                index++;
+                y++;
+            }
+
+            return 0;
         }
     }
 }
