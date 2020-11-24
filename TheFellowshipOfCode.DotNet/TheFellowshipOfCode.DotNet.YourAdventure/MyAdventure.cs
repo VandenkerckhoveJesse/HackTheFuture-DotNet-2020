@@ -18,13 +18,13 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
 {
     public class MyAdventure : IAdventure
     {
-        private const int WEIGHT_ENEMY = 100;
-        private const int WEIGHT_TREASURE = 0;
-        private const int WEIGHT_NOTHING = 40;
+        private const int WEIGHT_ENEMY = 10;
+        private const int WEIGHT_TREASURE = 50;
+        private const int WEIGHT_NOTHING = 200;
         
         private TurnAction[] turnActions = null;
-        private int start = 0;
-        private int end = 0;
+        private const int START = 0;
+        private const int END = 35;
         private int currentStepInTurnActions = 0;
         
 
@@ -56,8 +56,6 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
             if (turnActions == null)
             {
                 turnActions = getTurnActionsFromPathLocations(getPathLocationsFromMap(request.Map));
-                start = 0;//getNumberFromMatrix(request.Map, TileType.Start);
-                end = 35; //getNumberFromMatrix(request.Map, TileType.Finish);
             }
             return PlayToEnd();
 
@@ -149,8 +147,10 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
             var graph = new Graph<Point, string>();
             addTilesToGraph(graph, map); 
             connectTilesFromGraph(graph, map);
-            var ding = 0;
-            ShortestPathResult result = graph.Dijkstra((uint) start, (uint) end);
+            //oneseign: 41 67
+            //Split: 42 48
+            //splitting: 12 44
+            ShortestPathResult result = graph.Dijkstra(12, 44);
             var path = result.GetPath();
             var enumer = path.GetEnumerator();
             var points = getPointsFromPath(enumer, map);
@@ -162,7 +162,6 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
             var list = new List<Point>();
             while (enumerator.MoveNext())
             {
-                Console.WriteLine("ding");
                 var current = enumerator.Current;
                 list.Add(getPointFromPath(current, map));
             }

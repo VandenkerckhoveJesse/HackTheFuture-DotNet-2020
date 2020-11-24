@@ -16,7 +16,9 @@
       <e p=".dependencies\HTF2020.GameController.dll" t="Include" />
       <e p=".maps\castle.htf" t="Include" />
       <e p=".maps\newmap.htf" t="Include" />
+      <e p=".maps\onseigen.htf" t="Include" />
       <e p=".maps\simple.htf" t="Include" />
+      <e p=".maps\split.htf" t="Include" />
       <e p="0. Dependencies. Don't touch!" t="Include" />
       <e p="1. Maps for you to use as tests" t="Include" />
       <e p="2. Hack your code here!" t="Include" />
