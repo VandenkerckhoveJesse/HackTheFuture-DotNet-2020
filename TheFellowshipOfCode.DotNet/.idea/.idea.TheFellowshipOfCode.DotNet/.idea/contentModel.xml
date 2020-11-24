@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\jesse\.nuget\packages\microsoft.net.test.sdk\16.8.0\build\netcoreapp2.1" t="Include">
+      <e p="Microsoft.NET.Test.Sdk.Program.cs" t="Include" />
+    </e>
+    <e p="C:\Users\jesse\.nuget\packages\microsoft.testplatform.testhost\16.8.0\build\netcoreapp2.1\x64\testhost.dll" t="Include" />
+    <e p="C:\Users\jesse\.nuget\packages\microsoft.testplatform.testhost\16.8.0\build\netcoreapp2.1\x64\testhost.exe" t="Include" />
+    <e p="C:\Users\jesse\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.reporters.netcoreapp10.dll" t="Include" />
+    <e p="C:\Users\jesse\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.utility.netcoreapp10.dll" t="Include" />
+    <e p="C:\Users\jesse\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.visualstudio.dotnetcore.testadapter.dll" t="Include" />
+    <e p="C:\Users\jesse\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\jesse\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_TheFellowshipOfCode.DotNet.948376390.00" t="ExcludeRecursive" />
+    <e p="D:\Code\HackTheFuture-DotNet-2020\TheFellowshipOfCode.DotNet" t="IncludeFlat">
+      <e p=".dependencies\HTF2020.Contracts.dll" t="Include" />
+      <e p=".dependencies\HTF2020.GameController.dll" t="Include" />
+      <e p=".maps\castle.htf" t="Include" />
+      <e p=".maps\newmap.htf" t="Include" />
+      <e p=".maps\simple.htf" t="Include" />
+      <e p="0. Dependencies. Don't touch!" t="Include" />
+      <e p="1. Maps for you to use as tests" t="Include" />
+      <e p="2. Hack your code here!" t="Include" />
+      <e p="3. Put your unittests here!" t="Include" />
+      <e p="4. Use the following Console App to debug your adventure!" t="Include" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="TheFellowshipOfCode.DotNet.AdventureRunner" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="TheFellowshipOfCode.DotNet.AdventureRunner.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Program.cs" t="Include" />
+        <e p="TheFellowshipOfCode.DotNet.AdventureRunner.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="TheFellowshipOfCode.DotNet.sln" t="IncludeFlat" />
+      <e p="TheFellowshipOfCode.DotNet.YourAdventure" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="MyAdventure.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netstandard2.0" t="Include">
+              <e p="TheFellowshipOfCode.DotNet.YourAdventure.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="TheFellowshipOfCode.DotNet.YourAdventure.csproj" t="IncludeRecursive" />
+      </e>
+      <e p="TheFellowshipOfCode.DotNet.YourTests" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="MyAdventureTests.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="TheFellowshipOfCode.DotNet.YourTests.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="TheFellowshipOfCode.DotNet.YourTests.csproj" t="IncludeRecursive" />
+      </e>
+    </e>
+  </component>
+</project>
