@@ -10,6 +10,9 @@ using HTF2020.Contracts.Models;
 using HTF2020.Contracts.Models.Adventurers;
 using HTF2020.Contracts.Models.Party;
 using HTF2020.Contracts.Requests;
+using Dijkstra.NET.Graph;
+using Dijkstra.NET.Graph.Simple;
+using Dijkstra.NET.ShortestPath;
 
 namespace TheFellowshipOfCode.DotNet.YourAdventure
 {
@@ -61,7 +64,11 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
                 if (request.PossibleActions.Contains(TurnAction.Attack))
                 {
                     turnAction = TurnAction.Attack;
-                } 
+                }
+                else if(request.PossibleActions.Contains(TurnAction.Open))
+                {
+                    turnAction = TurnAction.Open;
+                }
                 else if(request.PossibleActions.Contains(TurnAction.Loot))
                 {
                     turnAction = TurnAction.Loot;
@@ -80,26 +87,26 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
         private TurnAction[] getTurnActionsFromPathLocations(Point[] pathLocations)
         {
             TurnAction[] result = new TurnAction[pathLocations.Length];
-            int i = 1;
+            int i = 0;
             while (i < pathLocations.Length-1)
             {
-                Point previousLocation = pathLocations[i - 1];
+                Point nextLocation = pathLocations[i + 1];
                 Point currentLocation = pathLocations[i];
-                if (previousLocation.X > currentLocation.X)
+                if (currentLocation.X > nextLocation.X)
                 {
-                    result[i-1] = TurnAction.WalkNorth;
+                    result[i] = TurnAction.WalkWest;
                 } 
-                else if (previousLocation.X < currentLocation.X)
+                else if (currentLocation.X < nextLocation.X)
                 {
-                    result[i-1] = TurnAction.WalkSouth;
+                    result[i] = TurnAction.WalkEast;
                 } 
-                else if (previousLocation.Y > currentLocation.Y)
+                else if (currentLocation.Y > nextLocation.Y)
                 {
-                    result[i-1] = TurnAction.WalkWest;
+                    result[i] = TurnAction.WalkSouth;
                 } 
-                else if (previousLocation.Y < currentLocation.Y)
+                else if (currentLocation.Y < nextLocation.Y)
                 {
-                    result[i-1] = TurnAction.WalkEast;
+                    result[i] = TurnAction.WalkSouth;
                 }
                 i++;
             }
@@ -110,6 +117,7 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
 
         private Point[] getPathLocationsFromMap(Map map)
         {
+            return dijkstrasAlgorithm(map);
             return new[] 
             {
                 new Point(0, 0),
@@ -118,14 +126,30 @@ namespace TheFellowshipOfCode.DotNet.YourAdventure
                 new Point(3, 0),
                 new Point(4, 0),
                 new Point(5, 0),
-                new Point(6, 0),
-                new Point(6, 1),
-                new Point(6, 2),
-                new Point(6, 3),
-                new Point(6, 4),
-                new Point(6, 5),
-                new Point(6, 6)
+                new Point(5, 1),
+                new Point(5, 2),
+                new Point(5, 3),
+                new Point(5, 4),
+                new Point(5, 5)
             };
+        }
+
+        struct DijkstraPoint
+        {
+            public Point Point { get; set; }
+            public int Weight { get; set; }
+        }
+        
+        private Point[] dijkstrasAlgorithm(Map map)
+        {
+            var graph = new Graph<Point, string>();
+            addTilesToGraph(graph, map);
+            return null;
+        }
+
+        private void addTilesToGraph(Graph<Point, string> graph, Map map)
+        {
+            
         }
     }
 }
